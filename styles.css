@@ -1,1 +1,10 @@
-
+body {
+  background-color: rgb(74, 199, 199);
+}
+#headline, #tagline {
+  color: rgb(255, 255, 255);
+  text-align: center;
+}
+#play {
+  text-align: center;
+}
