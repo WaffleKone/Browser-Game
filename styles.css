@@ -1,10 +1,42 @@
 body {
-  background-color: #2B87D1;
+  background-color: #2b87d1;
 }
-#headline, #tagline {
+#headline,
+#tagline,
+h3 {
   color: rgb(255, 255, 255);
   text-align: center;
 }
 #play {
   text-align: center;
+}
+.btn-light:hover {
+color:rgb(92, 92, 92)
+}
+.fadein {
+  margin: auto;
+  animation-duration: 2s;
+  animation-name: fadein;
+}
+.fadeout {
+  animation-duration: 2s;
+  animation-name: fadeout;
+  animation-fill-mode: forwards;
+}
+@keyframes fadein {
+  from {
+    opacity: 0%;
+  }
+  to {
+    opacity: 100%;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    opacity: 100%;
+  }
+  to {
+    opacity: 0%;
+  }
 }
