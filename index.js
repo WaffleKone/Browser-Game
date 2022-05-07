@@ -87,11 +87,11 @@ function checkWord(array) {
   if (isCorrect == true) {
     playerScore += 1;
     seenWords.push(currentWord);
-    let index = array.indexOf(currentWord); //finds wherever the index of the currentword is
+    let index = array.indexOf(currentWord); // finds wherever the index of the currentword is
     array.splice(index, 1); // removes 1 element starting wherever the index of currentword is.
     newWord(newWords);
   } else {
-    
+    gameOver()
   }
 }
 function updateGame() {
@@ -99,4 +99,39 @@ function updateGame() {
   word.innerHTML = currentWord;
   let score = document.getElementById('score');
   score.textContent = `Score: ${playerScore}`;
+}
+function gameOver() {
+  let gameDiv = document.getElementById('gameScreen')
+  while (gameDiv.firstChild) {
+    gameDiv.removeChild(gameDiv.firstChild)
+  }
+  gameDiv.remove()
+  
+  let gameOverDiv = document.createElement('div')
+  gameOverDiv.setAttribute('id', 'gameOver')
+  document.body.appendChild(gameOverDiv)
+
+  let gameOverBlurb = document.createElement('h3')
+  gameOverBlurb.setAttribute('id', 'overBlurb');
+  gameOverBlurb.textContent = `Game Over! You got a score of ${playerScore}!`;
+  gameOverDiv.append(gameOverBlurb);
+
+  let buttonDiv = document.createElement('div');
+  buttonDiv.setAttribute('id', 'buttonHolder');
+  gameOverDiv.append(buttonDiv);
+
+  let newGameButton = document.createElement('button');
+  newGameButton.className += 'btn btn-dark';
+  newGameButton.textContent = 'Try Again';
+  newGameButton.addEventListener('click', function () {
+    while (gameOverDiv.firstChild) {
+      gameOverDiv.removeChild(gameOverDiv.firstChild)
+    }
+    gameOverDiv.remove()
+    playerScore = 0;
+    seenWords = [];
+    createGame();
+  });
+  buttonDiv.append(newGameButton);
+
 }
