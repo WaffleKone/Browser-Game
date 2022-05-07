@@ -3,8 +3,8 @@ const mainMenu = document.getElementById('main-menu'); // gets the Div with the 
 const playBtn = document.getElementById('play'); // gets the Start Game button
 let playerScore = 0; // tracks the player's score.
 let seenWords = [];
-let newWords = ["car","write","words","testing"];
-let currentWord // will be defined upon createGame
+let newWords = ['car', 'write', 'words', 'testing'];
+let currentWord; // will be defined upon createGame
 
 // function to hide all elements in the main menu, is called via an onclick method with one of the buttons inside of it
 // since this is only going to be called one time with the start button, we can call the next function automatically.
@@ -33,14 +33,15 @@ function showIntro() {
     createGame();
   }, 7000); // hides the intro div after 7 seconds (equal to the animation duration of fadeout in the CSS file + duration before fadeout), then calls the game to be created
 }
-
+// creates all of the inital buttons, and calls upon newWord to get the first word for the player.
 function createGame() {
   let newDiv = document.createElement('div');
   newDiv.setAttribute('id', 'gameScreen');
   document.body.appendChild(newDiv);
-  newWord(newWords) // call this to randomly pick a word from the newWords array before updating the textContent
+  firstWord(); // call this to randomly pick a word from the newWords array before updating the textContent
   let newH3 = document.createElement('h3');
-  newH3.className += 'randWord'; 
+  newH3.className += 'randWord';
+  newH3.setAttribute('id', 'randWord');
   newH3.textContent = currentWord;
   newDiv.append(newH3);
 
@@ -66,15 +67,36 @@ function createGame() {
 
   let scoreH3 = document.createElement('h3');
   scoreH3.className += 'score';
+  scoreH3.setAttribute('id', 'score');
   scoreH3.textContent = `Score: ${playerScore}`;
   newDiv.append(scoreH3);
 }
-
+function firstWord() {
+  let randomPick = newWords[Math.floor(Math.random() * newWords.length)]; // picks a random num between 0 and 1, multiplies it by the length of the array chosen, then rounds it down.
+  currentWord = randomPick;
+}
 function newWord(array) {
-  let randomPick = array[Math.floor(Math.random() * array.length)] // picks a random num between 0 and 1, multiplies it by the length of the array chosen, then rounds it down.
-  currentWord = randomPick
+  let randomPick = array[Math.floor(Math.random() * array.length)];
+  currentWord = randomPick;
+  updateGame(); // updating the game before the first word is created will result in an error, hence the similar firstWord function.
 }
 
 function checkWord(array) {
-  console.log(array);
+  let isCorrect = array.includes(currentWord);
+  console.log(isCorrect);
+  if (isCorrect == true) {
+    playerScore += 1;
+    seenWords.push(currentWord);
+    let index = array.indexOf(currentWord); //finds wherever the index of the currentword is
+    array.splice(index, 1); // removes 1 element starting wherever the index of currentword is.
+    newWord(newWords);
+  } else {
+    
+  }
+}
+function updateGame() {
+  let word = document.getElementById('randWord');
+  word.innerHTML = currentWord;
+  let score = document.getElementById('score');
+  score.textContent = `Score: ${playerScore}`;
 }
