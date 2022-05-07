@@ -1,11 +1,9 @@
 // General Declarations
 const mainMenu = document.getElementById('main-menu'); // gets the Div with the ID main-menu
-const playBtn = document.getElementById('play'); // gets the Start Game button
 let playerScore = 0; // tracks the player's score.
 let seenWords = [];
-let newWords = ['car', 'write', 'words', 'testing'];
+let newWords = ['visitor', 'jolly', 'unarmed', 'voracious', 'irate', 'machine', 'toothsome', 'act', 'absorbing', 'joyous', 'control', 'abstracted', 'shape', 'connection', 'tick', 'merciful', 'best', 'mixed', 'helpful', 'abandoned', 'retire', 'soap', 'nutritious', 'bead', 'roof', 'realize', 'observation', 'friction', 'wobble', 'tidy', 'steadfast', 'relax', 'carve', 'grandiose', 'productive', 'form', 'flag', 'sassy', 'placid', 'cast', 'cute', 'push', 'comfortable', 'hysterical', 'sort', 'hateful'];
 let currentWord; // will be defined upon createGame
-
 // function to hide all elements in the main menu, is called via an onclick method with one of the buttons inside of it
 // since this is only going to be called one time with the start button, we can call the next function automatically.
 function hideMenu() {
@@ -89,7 +87,13 @@ function checkWord(array) {
     seenWords.push(currentWord);
     let index = array.indexOf(currentWord); // finds wherever the index of the currentword is
     array.splice(index, 1); // removes 1 element starting wherever the index of currentword is.
-    newWord(newWords);
+    let typeWord = Math.random()
+    if (typeWord > 0.5) {
+      newWord(newWords);
+    } else {
+      newWord(seenWords);
+    }
+    
   } else {
     gameOver()
   }
@@ -130,6 +134,7 @@ function gameOver() {
     gameOverDiv.remove()
     playerScore = 0;
     seenWords = [];
+    newWords = ['visitor', 'jolly', 'unarmed', 'voracious', 'irate', 'machine', 'toothsome', 'act', 'absorbing', 'joyous', 'control', 'abstracted', 'shape', 'connection', 'tick', 'merciful', 'best', 'mixed', 'helpful', 'abandoned', 'retire', 'soap', 'nutritious', 'bead', 'roof', 'realize', 'observation', 'friction', 'wobble', 'tidy', 'steadfast', 'relax', 'carve', 'grandiose', 'productive', 'form', 'flag', 'sassy', 'placid', 'cast', 'cute', 'push', 'comfortable', 'hysterical', 'sort', 'hateful'];
     createGame();
   });
   buttonDiv.append(newGameButton);
