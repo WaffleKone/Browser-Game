@@ -1,7 +1,10 @@
 // General Declarations
 const mainMenu = document.getElementById('main-menu'); // gets the Div with the ID main-menu
 const playBtn = document.getElementById('play'); // gets the Start Game button
-let playerScore // tracks the player's score.
+let playerScore = 0; // tracks the player's score.
+let seenWords = [];
+let newWords = ["car","write","words","testing"];
+let currentWord // will be defined upon createGame
 
 // function to hide all elements in the main menu, is called via an onclick method with one of the buttons inside of it
 // since this is only going to be called one time with the start button, we can call the next function automatically.
@@ -35,10 +38,10 @@ function createGame() {
   let newDiv = document.createElement('div');
   newDiv.setAttribute('id', 'gameScreen');
   document.body.appendChild(newDiv);
-
+  newWord(newWords) // call this to randomly pick a word from the newWords array before updating the textContent
   let newH3 = document.createElement('h3');
-  newH3.className += 'randWord';
-  newH3.textContent = 'sample word';
+  newH3.className += 'randWord'; 
+  newH3.textContent = currentWord;
   newDiv.append(newH3);
 
   let buttonDiv = document.createElement('div');
@@ -48,15 +51,30 @@ function createGame() {
   let seenButton = document.createElement('button');
   seenButton.className += 'btn btn-dark';
   seenButton.textContent = 'Seen';
+  seenButton.addEventListener('click', function () {
+    checkWord(seenWords); // to pass parameters in eventlistener functions, you must use an "anonymous function" source https://www.w3schools.com/jsref/met_element_addeventlistener.asp
+  });
   buttonDiv.append(seenButton);
 
   let newButton = document.createElement('button');
   newButton.className += 'btn btn-warning';
   newButton.textContent = 'New';
+  newButton.addEventListener('click', function () {
+    checkWord(newWords);
+  });
   buttonDiv.append(newButton);
 
   let scoreH3 = document.createElement('h3');
   scoreH3.className += 'score';
   scoreH3.textContent = `Score: ${playerScore}`;
   newDiv.append(scoreH3);
+}
+
+function newWord(array) {
+  let randomPick = array[Math.floor(Math.random() * array.length)] // picks a random num between 0 and 1, multiplies it by the length of the array chosen, then rounds it down.
+  currentWord = randomPick
+}
+
+function checkWord(array) {
+  console.log(array);
 }
