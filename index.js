@@ -4,6 +4,7 @@ const mainMenu = document.getElementById('main-menu'); // gets the Div with the 
 const hideMenuBtn = document.getElementById('hideMenu');
 let gameState = {
   playerScore: 0, // tracks the player's score.
+  hiScore: 0,
   seenWords: [],
   newWords: dictionary, // we grab dictionary from somewhere else to make the main code easier to read, and allow easier change in the future.
   currentWord: undefined, // will be defined upon createGame
@@ -11,9 +12,19 @@ let gameState = {
   isGameLoaded: false, // prevents some actions being taken if the game is not loaded.
 };
 hideMenuBtn.addEventListener('click', hideMenu);
+
+window.onload = function () {
+  let bgAudio = new Audio('./assets/bgMusic.mp3')
+  bgAudio.volume = 0.05;
+  bgAudio.play();
+}
+
 // function to hide all elements in the main menu, is called via an onclick method with one of the buttons inside of it
 // since this is only going to be called one time with the start button, we can call the next function automatically.
 function hideMenu() {
+  let clickAudio = new Audio('./assets/clickEffect.mp3')
+  clickAudio.volume = 0.2;
+  clickAudio.play();
   mainMenu.setAttribute('hidden', 'true');
   showIntro();
 }
@@ -21,10 +32,11 @@ function hideMenu() {
 function showIntro() {
   let newDiv = document.createElement('div');
   newDiv.setAttribute('id', 'intro');
+  newDiv.classList.add('center')
   document.body.appendChild(newDiv);
 
   let newH3 = document.createElement('h3');
-  newH3.className += 'fadein';
+  newH3.classList.add('fadein');
   newH3.innerHTML =
     'You will be shown a word chosen at random, you must choose if you have seen the word during this experiment or if it is a new word in the experiment. Choosing incorrectly ends the experiment.';
   newDiv.append(newH3);
@@ -36,6 +48,9 @@ function showIntro() {
   newDiv.append(nxtBtn);
 
   function advanceGame() {
+    let clickAudio = new Audio('./assets/clickEffect.mp3')
+    clickAudio.volume = 0.2;
+    clickAudio.play();
     newDiv.setAttribute('hidden', 'true');
     createGame();
   }
@@ -46,10 +61,11 @@ function createGame() {
   gameState.isGameLoaded = false;
   let newDiv = document.createElement('div');
   newDiv.setAttribute('id', 'gameScreen');
+  newDiv.classList.add('center')
   document.body.appendChild(newDiv);
   newWord(gameState.newWords); // call this to randomly pick a word from the newWords array before updating the textContent
   let newH3 = document.createElement('h3');
-  newH3.className += 'randWord';
+  newH3.classList.add('randWord');
   newH3.setAttribute('id', 'randWord');
   newH3.textContent = gameState.currentWord;
   newDiv.append(newH3);
@@ -59,7 +75,7 @@ function createGame() {
   newDiv.append(buttonDiv);
 
   let seenButton = document.createElement('button');
-  seenButton.className += 'btn btn-dark';
+  seenButton.classList.add('btn', 'btn-dark');
   seenButton.textContent = 'Seen';
   seenButton.addEventListener('click', function () {
     checkWord(gameState.seenWords); // to pass parameters in eventlistener functions, you must use an "anonymous function" source https://www.w3schools.com/jsref/met_element_addeventlistener.asp
@@ -75,7 +91,7 @@ function createGame() {
   buttonDiv.append(newButton);
 
   let scoreH3 = document.createElement('h3');
-  scoreH3.className += 'score';
+  scoreH3.classList.add('score');
   scoreH3.setAttribute('id', 'score');
   scoreH3.textContent = `Score: ${gameState.playerScore}`;
   newDiv.append(scoreH3);
@@ -110,6 +126,9 @@ function checkWord(array) {
     array.splice(index, 1); // removes 1 element starting wherever the index of currentword is.
     pickArray()
   } else {
+    let incorrectAudio = new Audio('./assets/wrongBuzz.mp3')
+    incorrectAudio.volume = 0.2;
+    incorrectAudio.play();
     gameOver();
   }
 }
@@ -128,6 +147,9 @@ function updateGame() {
   word.innerHTML = gameState.currentWord;
   let score = document.getElementById('score');
   score.textContent = `Score: ${gameState.playerScore}`;
+  if (gameState.hiScore < gameState.playerScore) {
+    gameState.hiScore = gameState.playerScore
+  }
 }
 
 function gameOver() {
@@ -139,6 +161,7 @@ function gameOver() {
 
   let gameOverDiv = document.createElement('div');
   gameOverDiv.setAttribute('id', 'gameOver');
+  gameOverDiv.classList.add('center')
   document.body.appendChild(gameOverDiv);
 
   let gameOverBlurb = document.createElement('h3');
@@ -150,8 +173,13 @@ function gameOver() {
   buttonDiv.setAttribute('id', 'buttonHolder');
   gameOverDiv.append(buttonDiv);
 
+  let hiScore = document.createElement('h3');
+  hiScore.setAttribute('id', 'hiScore');
+  hiScore.textContent = `High Score: ${gameState.hiScore}`
+  gameOverDiv.append(hiScore)
+
   let newGameButton = document.createElement('button');
-  newGameButton.className += 'btn btn-dark';
+  newGameButton.classList.add('btn','btn-dark');
   newGameButton.textContent = 'Try Again';
   newGameButton.addEventListener('click', function () {
     while (gameOverDiv.firstChild) {
