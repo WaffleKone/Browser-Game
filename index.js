@@ -100,11 +100,9 @@ function newWord(array) {
   gameState.currentWord = array[Math.floor(Math.random() * array.length)]; // picks a random number between 0 and 1, multiplies it by the array's length, and rounds it down.
   if (gameState.isGameLoaded == true) {
     if (gameState.lastWord != gameState.currentWord) { 
-    console.log('im true')
     updateGame();
     gameState.lastWord = gameState.currentWord
     } else {
-      console.log('oops got a duplicate')
       pickArray()
     }
   } else {
@@ -113,7 +111,6 @@ function newWord(array) {
 }
 function checkWord(array) {
   let isCorrect = array.includes(gameState.currentWord);
-  console.log(isCorrect);
   if (isCorrect == true) {
     let correctAudio = new Audio('./assets/CinemaSinsDing.mp3')
     correctAudio.volume = 0.2;
