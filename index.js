@@ -1,9 +1,16 @@
 // General Declarations
+import { dictionary } from './dictionary.js'; // pulls our dictionary from the dictionary.js file
 const mainMenu = document.getElementById('main-menu'); // gets the Div with the ID main-menu
-let playerScore = 0; // tracks the player's score.
-let seenWords = [];
-let newWords = ['visitor', 'jolly', 'unarmed', 'voracious', 'irate', 'machine', 'toothsome', 'act', 'absorbing', 'joyous', 'control', 'abstracted', 'shape', 'connection', 'tick', 'merciful', 'best', 'mixed', 'helpful', 'abandoned', 'retire', 'soap', 'nutritious', 'bead', 'roof', 'realize', 'observation', 'friction', 'wobble', 'tidy', 'steadfast', 'relax', 'carve', 'grandiose', 'productive', 'form', 'flag', 'sassy', 'placid', 'cast', 'cute', 'push', 'comfortable', 'hysterical', 'sort', 'hateful'];
-let currentWord; // will be defined upon createGame
+const hideMenuBtn = document.getElementById('hideMenu');
+let gameState = {
+  playerScore: 0, // tracks the player's score.
+  seenWords: [],
+  newWords: dictionary, // we grab dictionary from somewhere else to make the main code easier to read, and allow easier change in the future.
+  currentWord: undefined, // will be defined upon createGame
+  lastWord: undefined,
+  isGameLoaded: false, // prevents some actions being taken if the game is not loaded.
+};
+hideMenuBtn.addEventListener('click', hideMenu);
 // function to hide all elements in the main menu, is called via an onclick method with one of the buttons inside of it
 // since this is only going to be called one time with the start button, we can call the next function automatically.
 function hideMenu() {
@@ -33,14 +40,15 @@ function showIntro() {
 }
 // creates all of the inital buttons, and calls upon newWord to get the first word for the player.
 function createGame() {
+  gameState.isGameLoaded = false;
   let newDiv = document.createElement('div');
   newDiv.setAttribute('id', 'gameScreen');
   document.body.appendChild(newDiv);
-  firstWord(); // call this to randomly pick a word from the newWords array before updating the textContent
+  newWord(gameState.newWords); // call this to randomly pick a word from the newWords array before updating the textContent
   let newH3 = document.createElement('h3');
   newH3.className += 'randWord';
   newH3.setAttribute('id', 'randWord');
-  newH3.textContent = currentWord;
+  newH3.textContent = gameState.currentWord;
   newDiv.append(newH3);
 
   let buttonDiv = document.createElement('div');
@@ -51,7 +59,7 @@ function createGame() {
   seenButton.className += 'btn btn-dark';
   seenButton.textContent = 'Seen';
   seenButton.addEventListener('click', function () {
-    checkWord(seenWords); // to pass parameters in eventlistener functions, you must use an "anonymous function" source https://www.w3schools.com/jsref/met_element_addeventlistener.asp
+    checkWord(gameState.seenWords); // to pass parameters in eventlistener functions, you must use an "anonymous function" source https://www.w3schools.com/jsref/met_element_addeventlistener.asp
   });
   buttonDiv.append(seenButton);
 
@@ -59,65 +67,68 @@ function createGame() {
   newButton.className += 'btn btn-warning';
   newButton.textContent = 'New';
   newButton.addEventListener('click', function () {
-    checkWord(newWords);
+    checkWord(gameState.newWords);
   });
   buttonDiv.append(newButton);
 
   let scoreH3 = document.createElement('h3');
   scoreH3.className += 'score';
   scoreH3.setAttribute('id', 'score');
-  scoreH3.textContent = `Score: ${playerScore}`;
+  scoreH3.textContent = `Score: ${gameState.playerScore}`;
   newDiv.append(scoreH3);
+  gameState.isGameLoaded = true;
 }
-function firstWord() {
-  let randomPick = newWords[Math.floor(Math.random() * newWords.length)]; // picks a random num between 0 and 1, multiplies it by the length of the array chosen, then rounds it down.
-  currentWord = randomPick;
-}
+
 function newWord(array) {
-  let randomPick = array[Math.floor(Math.random() * array.length)];
-  currentWord = randomPick;
-  updateGame(); // updating the game before the first word is created will result in an error, hence the similar firstWord function.
+  gameState.currentWord = array[Math.floor(Math.random() * array.length)]; // picks a random number between 0 and 1, multiplies it by the array's length, and rounds it down.
+  if (gameState.isGameLoaded == true) {
+    if (isValidWord() === true)
+      updateGame();
+      gameState.lastWord = gameState.currentWord
+  }
 }
 
 function checkWord(array) {
-  let isCorrect = array.includes(currentWord);
+  let isCorrect = array.includes(gameState.currentWord);
   console.log(isCorrect);
   if (isCorrect == true) {
-    playerScore += 1;
-    seenWords.push(currentWord);
-    let index = array.indexOf(currentWord); // finds wherever the index of the currentword is
+    gameState.playerScore += 1;
+    gameState.seenWords.push(gameState.currentWord);
+    let index = array.indexOf(gameState.currentWord); // finds wherever the index of the currentword is
     array.splice(index, 1); // removes 1 element starting wherever the index of currentword is.
-    let typeWord = Math.random()
+    let typeWord = Math.random();
     if (typeWord > 0.5) {
-      newWord(newWords);
+      newWord(gameState.newWords);
     } else {
-      newWord(seenWords);
+      newWord(gameState.seenWords);
     }
-    
   } else {
-    gameOver()
+    gameOver();
   }
 }
+
+
 function updateGame() {
   let word = document.getElementById('randWord');
-  word.innerHTML = currentWord;
+  word.innerHTML = gameState.currentWord;
   let score = document.getElementById('score');
-  score.textContent = `Score: ${playerScore}`;
+  score.textContent = `Score: ${gameState.playerScore}`;
 }
-function gameOver() {
-  let gameDiv = document.getElementById('gameScreen')
-  while (gameDiv.firstChild) {
-    gameDiv.removeChild(gameDiv.firstChild)
-  }
-  gameDiv.remove()
-  
-  let gameOverDiv = document.createElement('div')
-  gameOverDiv.setAttribute('id', 'gameOver')
-  document.body.appendChild(gameOverDiv)
 
-  let gameOverBlurb = document.createElement('h3')
+function gameOver() {
+  let gameDiv = document.getElementById('gameScreen');
+  while (gameDiv.firstChild) {
+    gameDiv.removeChild(gameDiv.firstChild);
+  }
+  gameDiv.remove();
+
+  let gameOverDiv = document.createElement('div');
+  gameOverDiv.setAttribute('id', 'gameOver');
+  document.body.appendChild(gameOverDiv);
+
+  let gameOverBlurb = document.createElement('h3');
   gameOverBlurb.setAttribute('id', 'overBlurb');
-  gameOverBlurb.textContent = `Game Over! You got a score of ${playerScore}!`;
+  gameOverBlurb.textContent = `Game Over! You got a score of ${gameState.playerScore}!`;
   gameOverDiv.append(gameOverBlurb);
 
   let buttonDiv = document.createElement('div');
@@ -129,14 +140,13 @@ function gameOver() {
   newGameButton.textContent = 'Try Again';
   newGameButton.addEventListener('click', function () {
     while (gameOverDiv.firstChild) {
-      gameOverDiv.removeChild(gameOverDiv.firstChild)
+      gameOverDiv.removeChild(gameOverDiv.firstChild);
     }
-    gameOverDiv.remove()
-    playerScore = 0;
-    seenWords = [];
-    newWords = ['visitor', 'jolly', 'unarmed', 'voracious', 'irate', 'machine', 'toothsome', 'act', 'absorbing', 'joyous', 'control', 'abstracted', 'shape', 'connection', 'tick', 'merciful', 'best', 'mixed', 'helpful', 'abandoned', 'retire', 'soap', 'nutritious', 'bead', 'roof', 'realize', 'observation', 'friction', 'wobble', 'tidy', 'steadfast', 'relax', 'carve', 'grandiose', 'productive', 'form', 'flag', 'sassy', 'placid', 'cast', 'cute', 'push', 'comfortable', 'hysterical', 'sort', 'hateful'];
+    gameOverDiv.remove();
+    gameState.playerScore = 0;
+    gameState.seenWords = [];
+    gameState.newWords = dictionary;
     createGame();
   });
   buttonDiv.append(newGameButton);
-
 }
