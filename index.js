@@ -29,14 +29,17 @@ function showIntro() {
     'You will be shown a word chosen at random, you must choose if you have seen the word during this experiment or if it is a new word in the experiment. Choosing incorrectly ends the experiment.';
   newDiv.append(newH3);
 
-  setTimeout(() => {
-    newH3.className = 'fadeout';
-  }, 5000); // have the rules fade out after 5 seconds (ms)
+  let nxtBtn = document.createElement('button');
+  nxtBtn.classList.add('btn', 'btn-light', 'fadein')
+  nxtBtn.textContent = 'Next'
+  nxtBtn.addEventListener('click', advanceGame)
+  newDiv.append(nxtBtn);
 
-  setTimeout(() => {
+  function advanceGame() {
     newDiv.setAttribute('hidden', 'true');
     createGame();
-  }, 7000); // hides the intro div after 7 seconds (equal to the animation duration of fadeout in the CSS file + duration before fadeout), then calls the game to be created
+  }
+  ; // hides the intro div after 7 seconds (equal to the animation duration of fadeout in the CSS file + duration before fadeout), then calls the game to be created
 }
 // creates all of the inital buttons, and calls upon newWord to get the first word for the player.
 function createGame() {
@@ -82,31 +85,43 @@ function createGame() {
 function newWord(array) {
   gameState.currentWord = array[Math.floor(Math.random() * array.length)]; // picks a random number between 0 and 1, multiplies it by the array's length, and rounds it down.
   if (gameState.isGameLoaded == true) {
-    if (isValidWord() === true)
-      updateGame();
-      gameState.lastWord = gameState.currentWord
+    if (gameState.lastWord != gameState.currentWord) { 
+    console.log('im true')
+    updateGame();
+    gameState.lastWord = gameState.currentWord
+    } else {
+      console.log('oops got a duplicate')
+      pickArray()
+    }
+  } else {
+    gameState.lastWord = gameState.currentWord
   }
 }
-
 function checkWord(array) {
   let isCorrect = array.includes(gameState.currentWord);
   console.log(isCorrect);
   if (isCorrect == true) {
+    let correctAudio = new Audio('./assets/CinemaSinsDing.mp3')
+    correctAudio.volume = 0.2;
+    correctAudio.play();
     gameState.playerScore += 1;
     gameState.seenWords.push(gameState.currentWord);
     let index = array.indexOf(gameState.currentWord); // finds wherever the index of the currentword is
     array.splice(index, 1); // removes 1 element starting wherever the index of currentword is.
-    let typeWord = Math.random();
-    if (typeWord > 0.5) {
-      newWord(gameState.newWords);
-    } else {
-      newWord(gameState.seenWords);
-    }
+    pickArray()
   } else {
     gameOver();
   }
 }
 
+function pickArray(){
+  let typeWord = Math.random();
+  if (typeWord > 0.5) {
+    newWord(gameState.newWords);
+  } else {
+    newWord(gameState.seenWords);
+  }
+}
 
 function updateGame() {
   let word = document.getElementById('randWord');
