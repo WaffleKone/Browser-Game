@@ -13,15 +13,13 @@ let gameState = {
 };
 hideMenuBtn.addEventListener('click', hideMenu);
 
-window.onload = function () {
-  let bgAudio = new Audio('./assets/bgMusic.mp3')
-  bgAudio.volume = 0.05;
-  bgAudio.play();
-}
 
 // function to hide all elements in the main menu, is called via an onclick method with one of the buttons inside of it
 // since this is only going to be called one time with the start button, we can call the next function automatically.
 function hideMenu() {
+  let bgAudio = new Audio('./assets/bgMusic.mp3')
+  bgAudio.volume = 0.05;
+  bgAudio.play();
   let clickAudio = new Audio('./assets/clickEffect.mp3')
   clickAudio.volume = 0.2;
   clickAudio.play();
