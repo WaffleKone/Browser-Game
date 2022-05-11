@@ -184,6 +184,9 @@ function gameOver() {
     gameState.playerScore = 0;
     gameState.seenWords = [];
     gameState.newWords = dictionary;
+    let clickAudio = new Audio('./assets/clickEffect.mp3')
+    clickAudio.volume = 0.2;
+    clickAudio.play();
     createGame();
   });
   buttonDiv.append(newGameButton);
