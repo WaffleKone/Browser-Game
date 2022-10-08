@@ -1,14 +1,14 @@
 // General Declarations
 import { dictionary } from './dictionary.js'; // pulls our dictionary from the dictionary.js file
-const mainMenu = document.getElementById('main-menu'); // gets the Div with the ID main-menu
-const hideMenuBtn = document.getElementById('hideMenu');
+const mainMenu:any = document.getElementById('main-menu'); // gets the Div with the ID main-menu
+const hideMenuBtn:HTMLElement | any = document.getElementById('hideMenu');
+let seenWords: string[]
 let gameState = {
-  playerScore: 0, // tracks the player's score.
+  playerScore: 0 as number, // tracks the player's score.
   hiScore: 0,
-  seenWords: [],
   newWords: dictionary, // we grab dictionary from somewhere else to make the main code easier to read, and allow easier change in the future.
-  currentWord: undefined, // will be defined upon createGame
-  lastWord: undefined,
+  currentWord: '' as any, // will be defined upon createGame
+  lastWord: '' as string,
   isGameLoaded: false, // prevents some actions being taken if the game is not loaded.
 };
 hideMenuBtn.addEventListener('click', hideMenu);
@@ -62,7 +62,7 @@ function createGame() {
   newDiv.classList.add('center')
   document.body.appendChild(newDiv);
   newWord(gameState.newWords); // call this to randomly pick a word from the newWords array before updating the textContent
-  let newH3 = document.createElement('h3');
+  let newH3:any = document.createElement('h3');
   newH3.classList.add('randWord');
   newH3.setAttribute('id', 'randWord');
   newH3.textContent = gameState.currentWord;
@@ -76,7 +76,7 @@ function createGame() {
   seenButton.classList.add('btn', 'btn-dark');
   seenButton.textContent = 'Seen';
   seenButton.addEventListener('click', function () {
-    checkWord(gameState.seenWords); // to pass parameters in eventlistener functions, you must use an "anonymous function" source https://www.w3schools.com/jsref/met_element_addeventlistener.asp
+    checkWord(seenWords); // to pass parameters in eventlistener functions, you must use an "anonymous function" source https://www.w3schools.com/jsref/met_element_addeventlistener.asp
   });
   buttonDiv.append(seenButton);
 
@@ -96,7 +96,7 @@ function createGame() {
   gameState.isGameLoaded = true;
 }
 
-function newWord(array) {
+function newWord(array:any) {
   gameState.currentWord = array[Math.floor(Math.random() * array.length)]; // picks a random number between 0 and 1, multiplies it by the array's length, and rounds it down.
   if (gameState.isGameLoaded == true) {
     if (gameState.lastWord != gameState.currentWord) { 
@@ -109,14 +109,14 @@ function newWord(array) {
     gameState.lastWord = gameState.currentWord
   }
 }
-function checkWord(array) {
+function checkWord(array:any):void {
   let isCorrect = array.includes(gameState.currentWord);
   if (isCorrect == true) {
     let correctAudio = new Audio('./assets/CinemaSinsDing.mp3')
     correctAudio.volume = 0.2;
     correctAudio.play();
     gameState.playerScore += 1;
-    gameState.seenWords.push(gameState.currentWord);
+    seenWords.push(gameState.currentWord);
     let index = array.indexOf(gameState.currentWord); // finds wherever the index of the currentword is
     array.splice(index, 1); // removes 1 element starting wherever the index of currentword is.
     pickArray()
@@ -133,14 +133,14 @@ function pickArray(){
   if (typeWord > 0.5) {
     newWord(gameState.newWords);
   } else {
-    newWord(gameState.seenWords);
+    newWord(seenWords);
   }
 }
 
-function updateGame() {
-  let word = document.getElementById('randWord');
+function updateGame():void {
+  let word:any = document.getElementById('randWord');
   word.innerHTML = gameState.currentWord;
-  let score = document.getElementById('score');
+  let score:any = document.getElementById('score');
   score.textContent = `Score: ${gameState.playerScore}`;
   if (gameState.hiScore < gameState.playerScore) {
     gameState.hiScore = gameState.playerScore
@@ -148,7 +148,7 @@ function updateGame() {
 }
 
 function gameOver() {
-  let gameDiv = document.getElementById('gameScreen');
+  let gameDiv:HTMLElement | any = document.getElementById('gameScreen');
   while (gameDiv.firstChild) {
     gameDiv.removeChild(gameDiv.firstChild);
   }
@@ -182,7 +182,7 @@ function gameOver() {
     }
     gameOverDiv.remove();
     gameState.playerScore = 0;
-    gameState.seenWords = [];
+    seenWords = [];
     gameState.newWords = dictionary;
     let clickAudio = new Audio('./assets/clickEffect.mp3')
     clickAudio.volume = 0.2;
